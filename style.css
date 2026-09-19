@@ -1,0 +1,605 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+:root {
+  --bg-dark: #0f0103;
+  --bg-card: rgba(36, 4, 10, 0.72);
+  --bg-card-hover: rgba(52, 6, 15, 0.85);
+  --border-crimson: rgba(225, 60, 75, 0.25);
+  --border-glow: rgba(245, 80, 95, 0.55);
+  --text-cream: #faeedf;
+  --text-light: #f3dfd7;
+  --text-muted: rgba(243, 223, 215, 0.75);
+  --accent-red: #d92534;
+  --accent-gold: #e5b89a;
+  --font-serif: 'Playfair Display', 'Cormorant Garamond', serif;
+  --font-sans: 'Montserrat', sans-serif;
+}
+
+html, body {
+  width: 100%;
+  min-height: 100%;
+  color: var(--text-light);
+  font-family: var(--font-sans);
+  overflow-x: hidden;
+  scroll-behavior: smooth;
+}
+
+/* ========================================================
+   1. FIXED BACKGROUND CANVAS & VIGNETTE
+   ======================================================== */
+#canvas-container {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  z-index: 0;
+  pointer-events: none;
+  overflow: hidden;
+}
+
+#animation-canvas {
+  width: 100%;
+  height: 100%;
+  display: block;
+  opacity: 0.5;
+  
+  transition: opacity 0.5s ease;
+}
+
+.crimson-vignette {
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(circle at 50% 30%, rgba(65, 8, 18, 0.35) 0%, rgba(25, 2, 6, 0.8) 60%, rgba(12, 1, 3, 0.98) 100%);
+  mix-blend-mode: multiply;
+  pointer-events: none;
+}
+
+/* ========================================================
+   2. MINIMAL LOADER & SCROLL INDICATOR
+   ======================================================== */
+#loader {
+  position: fixed;
+  inset: 0;
+  background-color: #0b0103;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 999;
+  transition: opacity 0.6s cubic-bezier(0.16, 1, 0.3, 1), visibility 0.6s;
+}
+
+#loader.loaded {
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+}
+
+.loader-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 14px;
+}
+
+.loader-brand {
+  font-size: 20px;
+  letter-spacing: 0.35em;
+  font-weight: 700;
+  color: var(--text-cream);
+}
+
+.loader-bar-bg {
+  width: 220px;
+  height: 3px;
+  background: rgba(255, 255, 255, 0.12);
+  border-radius: 999px;
+  overflow: hidden;
+}
+
+#loader-bar {
+  width: 0%;
+  height: 100%;
+  background: linear-gradient(90deg, #d92534, #faeedf);
+  transition: width 0.15s ease-out;
+}
+
+#loader-text {
+  font-size: 11px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+}
+
+#scroll-indicator {
+  position: fixed;
+  bottom: 24px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  z-index: 10;
+  pointer-events: none;
+  transition: opacity 0.4s ease;
+}
+
+#scroll-indicator.hide {
+  opacity: 0;
+}
+
+.mouse {
+  width: 18px;
+  height: 28px;
+  border: 2px solid rgba(250, 238, 223, 0.5);
+  border-radius: 12px;
+  position: relative;
+}
+
+.wheel {
+  width: 3px;
+  height: 5px;
+  background-color: var(--text-cream);
+  border-radius: 2px;
+  position: absolute;
+  top: 5px;
+  left: 50%;
+  transform: translateX(-50%);
+  animation: scrollWheel 1.8s cubic-bezier(0.65, 0, 0.35, 1) infinite;
+}
+
+@keyframes scrollWheel {
+  0% { opacity: 1; transform: translate(-50%, 0); }
+  100% { opacity: 0; transform: translate(-50%, 12px); }
+}
+
+#scroll-indicator span {
+  font-size: 10px;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+}
+
+/* ========================================================
+   3. PORTFOLIO WRAPPER & SECTIONS
+   ======================================================== */
+.portfolio-wrapper {
+  position: relative;
+  z-index: 2;
+  max-width: 1060px;
+  margin: 0 auto;
+  padding: 20px 24px 100px;
+  display: flex;
+  flex-direction: column;
+  gap: 50px;
+}
+
+.serif-title {
+  font-family: var(--font-serif);
+  font-weight: 600;
+  color: var(--text-cream);
+  font-size: 2.1rem;
+  letter-spacing: -0.01em;
+  text-transform: lowercase;
+}
+
+.serif-title.large {
+  font-size: 3.4rem;
+  text-transform: none;
+}
+
+/* ========================================================
+   4. HERO SECTION
+   ======================================================== */
+.section-hero {
+  position: relative;
+  min-height: 85vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 40px 0 20px;
+  overflow: visible;
+}
+
+.hero-watermark {
+  position: absolute;
+  top: 10%;
+  left: 20%;
+  transform: translateX(-50%);
+  font-family: var(--font-serif);
+  font-size: 100px;
+  font-weight: 700;
+  color: #fff;
+  letter-spacing: -0.04em;
+  line-height: 0.9;
+  z-index: 1;
+  pointer-events: none;
+  user-select: none;
+  white-space: nowrap;
+}
+.hero-watermark-1 {
+  position: absolute;
+  top: 23%;
+  left: 14%;
+  transform: translateX(-50%);
+  font-family: var(--font-serif);
+  font-size: 100px;
+  font-weight: 700;
+  color: rgba(89, 11, 20, 0.45);
+  letter-spacing: -0.04em;
+  line-height: 0.9;
+  z-index: 1;
+  pointer-events: none;
+  user-select: none;
+  white-space: nowrap;
+}
+
+
+
+
+.hero-left {
+  top: 10%;
+  gap: 40px;
+}
+
+.hero-roles {
+   position: relative;
+  top: 10%;
+  left: -130px;
+  line-height: 0.95;
+}
+
+.role-text {
+  font-size:40px;
+  top: 10%;
+  color: #ffffff;
+  letter-spacing: -0.02em;
+  text-shadow: 0 4px 20px rgba(0, 0, 0, 0.8);
+}
+.hero-roles-1{
+  position: relative;
+  top: 25px;
+  left: -130px;
+}
+
+
+
+
+
+
+.skills-label {
+            font-size: 12px;
+            letter-spacing: 5px;
+            font-weight: 600;
+            color: #c6a88a;
+            
+            text-transform: uppercase;
+        }
+
+        .skills-title {
+            font-family: "Playfair Display", serif;
+            font-size: clamp(42px, 5vw, 65px);
+            font-weight: 600;
+            line-height: 1.05;
+             position: relative;
+            top: -20px;
+            color: #f4eee8;
+        }
+
+        .skills-description {
+            position: relative;
+            top: -30px;
+            max-width: 480px;
+            color: #c8c3bf;
+            font-size: 30px;
+            line-height: 1.6;
+            
+        }
+         .skills-grid {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 14px;
+            max-width: 850px;
+             position: relative;
+            top: -30px;
+        }
+
+
+        .skill-card {
+            width: 115px;
+            height: 105px;
+
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+
+            border-radius: 12px;
+
+            background: var(--bg-card);
+
+                
+
+            border: 1px solid rgba(255, 255, 255, 0.09);
+
+            box-shadow:
+                inset 0 1px 0 rgba(255, 255, 255, 0.04),
+                0 10px 25px rgba(0, 0, 0, 0.25);
+
+            backdrop-filter: blur(10px);
+
+            
+        }
+
+        .skill-card:hover {
+            transform: translateY(-7px);
+
+            border-color: rgba(206, 169, 133, 0.5);
+
+            background: #572121;
+                
+        }
+
+
+        .skill-icon {
+            width: 42px;
+            height: 42px;
+
+            display: flex;
+            align-items: center;
+            justify-content: center;
+
+            margin-bottom: 10px;
+
+            font-size: 32px;
+            font-weight: 600;
+        }
+
+        .skill-icon img {
+            width: 35px;
+            height: 35px;
+            object-fit: contain;
+        }
+
+        .skill-name {
+            font-size: 13px;
+            color: #ded9d4;
+            text-align: center;
+            font-weight: 500;
+        }
+
+
+.education{
+  position: relative;
+  top: -80px;
+  font-size: 12px;
+            letter-spacing: 5px;
+            font-weight: 600;
+            color: #c6a88a;
+            
+            text-transform: uppercase;
+}
+.education-title{
+  font-family: "Playfair Display", serif;
+            font-size: clamp(42px, 5vw, 65px);
+            font-weight: 600;
+            line-height: 1.05;
+            position: relative;
+            top: -90px;
+            color: #f4eee8;
+}
+.degree{
+  position: relative;
+            top: -90px;
+            max-width: 400px;
+            color: #c8c3bf;
+            font-size: 25px;
+            line-height: 1.6;
+}
+.university{
+  position: relative;
+  top: -90px;
+}
+.projects-label{
+  font-size: 12px;
+            letter-spacing: 5px;
+            font-weight: 600;
+            color: #c6a88a;
+            margin-bottom: 12px;
+            margin-top: 60px;
+            text-transform: uppercase;
+}
+.projects-title{
+  font-family: "Playfair Display", serif;
+            font-size: clamp(42px, 5vw, 65px);
+            font-weight: 600;
+            line-height: 1.05;
+            
+            color: #f4eee8;
+}
+.project-category{
+  position: relative;
+  top: 10px;
+  font-weight: 300;
+}
+ .project-grid {
+           position: relative;
+  top: 20px;
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 16px;
+            margin-bottom: 18px;
+        }
+.project-card {
+
+            min-height: 145px;
+
+            padding: 20px;
+
+            display: flex;
+
+            align-items: flex-start;
+
+            gap: 18px;
+
+            position: relative;
+
+            border-radius: 13px;
+
+            background:var(--bg-card);
+
+            border: 1px solid rgba(255, 255, 255, 0.08);
+
+            box-shadow:
+                inset 0 1px 0 rgba(255,255,255,0.04),
+                0 12px 30px rgba(0,0,0,0.25);
+
+            backdrop-filter: blur(12px);
+          }
+
+        .project-card:hover {
+
+            transform: translateY(-5px);
+
+            border-color: rgba(198, 168, 138, 0.45);
+
+            background:#572121;
+        }
+         .project-name {
+            
+            font-size: 15px;
+
+            font-weight: 600;
+
+            line-height: 1.3;
+
+            color: #f1ece7;
+
+            margin-bottom: 8px;
+        }
+
+.experience-label{
+ font-size: 12px;
+            letter-spacing: 5px;
+            font-weight: 600;
+            color: #c6a88a;
+            margin-bottom: 12px;
+            margin-top: 60px;
+            text-transform: uppercase;
+}        
+.experience-title{
+font-family: "Playfair Display", serif;
+            font-size: clamp(42px, 5vw, 65px);
+            font-weight: 600;
+            line-height: 1.05;
+            margin-bottom: 10px;
+            color: #f4eee8;
+}
+
+
+/* =========================
+   HERO BUTTON
+========================= */
+
+.hero-actions {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    margin-top: 30px;
+}
+
+.view-work-btn {
+  position: relative;
+  top: -150px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 18px;
+
+    padding: 14px 25px;
+
+    min-width: 175px;
+
+    background: #e58d84;
+    color: #171111;
+
+    border-radius: 30px;
+
+    text-decoration: none;
+
+    font-family: "Inter", sans-serif;
+    font-size: 14px;
+    font-weight: 600;
+
+    transition: all 0.3s ease;
+}
+
+.view-work-btn span {
+    font-size: 21px;
+    line-height: 1;
+
+    transition: transform 0.3s ease;
+}
+
+.view-work-btn:hover {
+    background: #f1a098;
+
+    transform: translateY(-3px);
+
+    box-shadow:
+        0 10px 30px rgba(229, 141, 132, 0.25);
+}
+
+.view-work-btn:hover span {
+    transform: translateX(5px);
+}
+
+
+/* =========================
+   SOCIAL LINKS
+========================= */
+
+.social-links {
+    display: flex;
+    align-items: center;
+    gap: 25px;
+
+    margin-top: 25px;
+}
+
+.social-icon {
+  position: relative;
+  top: -190px;
+  left: 20px;
+    width: 23px;
+    height: 23px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    color: #eeeeee;
+
+    text-decoration: none;
+
+    transition:
+        transform 0.3s ease,
+        color 0.3s ease;
+}
+
+.social-icon svg {
+    width: 21px;
+    height: 21px;
+
+    fill: currentColor;
+}
+
+.social-icon:hover {
+    color: #e58d84;
+    transform: translateY(-4px);
+}
