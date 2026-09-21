@@ -28,6 +28,7 @@ html, body {
   scroll-behavior: smooth;
 }
 
+
 /* ========================================================
    1. FIXED BACKGROUND CANVAS & VIGNETTE
    ======================================================== */
@@ -209,8 +210,8 @@ html, body {
 .hero-watermark {
   position: absolute;
   top: 10%;
-  left: 20%;
-  transform: translateX(-50%);
+  left: 10%;
+  transform: translateX(-15%);
   font-family: var(--font-serif);
   font-size: 100px;
   font-weight: 700;
@@ -226,7 +227,7 @@ html, body {
   position: absolute;
   top: 23%;
   left: 14%;
-  transform: translateX(-50%);
+  transform: translateX(-25%);
   font-family: var(--font-serif);
   font-size: 100px;
   font-weight: 700;
@@ -255,8 +256,10 @@ html, body {
 }
 
 .role-text {
-  font-size:40px;
-  top: 10%;
+  position: relative;
+    font-size: 25px;
+    top: 20px;
+    left: 103px;
   color: #ffffff;
   letter-spacing: -0.02em;
   text-shadow: 0 4px 20px rgba(0, 0, 0, 0.8);
@@ -264,7 +267,7 @@ html, body {
 .hero-roles-1{
   position: relative;
   top: 25px;
-  left: -130px;
+  left: -20px;
 }
 
 
@@ -603,3 +606,5 @@ font-family: "Playfair Display", serif;
     color: #e58d84;
     transform: translateY(-4px);
 }
+
+
